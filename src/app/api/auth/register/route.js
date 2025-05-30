@@ -1,6 +1,14 @@
-
 import { db } from '@/lib/firestore';
-import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  serverTimestamp,
+  doc,
+  getDoc,
+} from 'firebase/firestore';
 import bcrypt from 'bcryptjs';
 
 export async function POST(req) {
@@ -34,32 +42,26 @@ export async function POST(req) {
   return new Response(JSON.stringify({ message: "User created" }), { status: 201 });
 }
 
-export async function GET() {
-  try {
-    const snapshot = await getDocs(collection(db, "users"));
-    const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    return new Response(JSON.stringify(users), { status: 200 });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: "Failed to fetch users" }), { status: 500 });
-  }
-}
-
-export async function GET(request, { params }) {
-  const { id } = params;
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
 
   try {
-    const userRef = doc(db, "users", id);
-    const userSnap = await getDoc(userRef);
+    if (id) {
+      const userRef = doc(db, "users", id);
+      const userSnap = await getDoc(userRef);
 
-    if (!userSnap.exists()) {
-      return new Response(JSON.stringify({ error: "User not found" }), { status: 404 });
+      if (!userSnap.exists()) {
+        return new Response(JSON.stringify({ error: "User not found" }), { status: 404 });
+      }
+
+      return new Response(JSON.stringify({ id: userSnap.id, ...userSnap.data() }), { status: 200 });
+    } else {
+      const snapshot = await getDocs(collection(db, "users"));
+      const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      return new Response(JSON.stringify(users), { status: 200 });
     }
-
-    const userData = { id: userSnap.id, ...userSnap.data() };
-    return new Response(JSON.stringify(userData), { status: 200 });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: "Failed to fetch user" }), { status: 500 });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: "Failed to fetch user(s)" }), { status: 500 });
   }
 }
-
-
