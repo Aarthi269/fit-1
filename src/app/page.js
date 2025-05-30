@@ -32,7 +32,7 @@ const Dashboard = () => {
 
       {/* Today's Workout Plan */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold mb-6">💪 Today’s Workout</h2>
+        <h2 className="text-3xl font-bold mb-6">💪 Today&quot;s Workout</h2>
         <div className="bg-gray-900 rounded-lg p-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
             { title: 'Morning Cardio', detail: '20 min run + jumping jacks' },
@@ -50,7 +50,7 @@ const Dashboard = () => {
       {/* Motivational Quote */}
       <section className="mb-16 text-center">
         <blockquote className="italic text-gray-400 text-xl">
-          "Success doesn’t come from what you do occasionally, it comes from what you do consistently."
+          &quot;Success doesn’t come from what you do occasionally, it comes from what you do consistently.&quot;
         </blockquote>
       </section>
 
